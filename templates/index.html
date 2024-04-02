@@ -17,15 +17,15 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            margin-left: -30px; /* Half the width */
-            margin-top: -30px; /* Half the height */
+            margin-left: -30px; 
+            margin-top: -30px; 
         }
         .card-title {
-    background-color: #2c3e50; /* Adjust the color to match your needs */
+    background-color: #2c3e50; 
     color: white;
     padding: 10px;
     border-radius: 5px;
-    font-family: 'Arial', sans-serif; /* This is a common font, you can choose any other as per your preference */
+    font-family: 'Arial', sans-serif; 
   }
 
         @keyframes spin {
@@ -71,7 +71,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">Stack Overflow Similarity Search </h1>
+        <h1 class="mb-4">Stack Overflow Similarity Search</h1>
         <form method="POST" id="searchForm">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" name="search" placeholder="Enter search term" aria-label="Search term" aria-describedby="button-addon">
@@ -81,30 +81,29 @@
             </div>
         </form>
         <div class="loader hidden" id="loader"></div>
-        {% if results %}
-            <div id="results">
+        <div id="results">
+            {% if results %}
                 {% for result in results %}
                     <div class="card mb-3">
                         <div class="card-header">
                             Question {{ loop.index }}
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title   ">{{ result.question }}</h5>
+                            <h5 class="card-title">{{ result.question }}</h5>
                             <p class="card-text">
                                 {% if result.answers %}
-                                  {{ result.answers | remove_newlines | safe }}
+                                    {{ result.answers | remove_newlines | safe }}
                                 {% else %}
-                                  No answer.
+                                    No answer.
                                 {% endif %}
-                              </p>
-                                                      </div>
+                            </p>
+                        </div>
                     </div>
                 {% endfor %}
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
-    
-    <!-- Bootstrap JS and dependencies -->
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -112,7 +111,7 @@
         document.getElementById('searchForm').addEventListener('submit', function(event) {
             event.preventDefault();
             document.getElementById('loader').classList.remove('hidden');
-    
+
             var formData = new FormData(document.getElementById('searchForm'));
             fetch(window.location.href, {
                 method: 'POST',
@@ -122,18 +121,21 @@
             .then(html => {
                 var parser = new DOMParser();
                 var doc = parser.parseFromString(html, 'text/html');
-                document.getElementById('results').innerHTML = doc.getElementById('results').innerHTML;
+                var resultsElement = document.getElementById('results');
+                var newResults = doc.getElementById('results');
+                if (newResults) {
+                    resultsElement.innerHTML = newResults.innerHTML;
+                } else {
+                    resultsElement.innerHTML = '<p>No results found.</p>';
+                }
                 document.getElementById('loader').classList.add('hidden');
             })
             .catch(error => {
                 console.error('Error:', error);
+                document.getElementById('results').innerHTML = '<p>Error loading results.</p>';
                 document.getElementById('loader').classList.add('hidden');
             });
         });
     </script>
-    
-    
-    
-    
 </body>
 </html>
